@@ -20,7 +20,8 @@ data ConfigM m = Config {
                      cCrossCompile :: Bool,
                      cCrossSafe :: Bool,
                      cVerbose :: Bool,
-                     cFlags :: [Flag]
+                     cFlags :: [Flag],
+                     cAlien :: Maybe FilePath
                  }
 
 cTemplate :: ConfigM Id -> FilePath
@@ -42,7 +43,8 @@ emptyMode = UseConfig $ Config {
                             cCrossCompile = False,
                             cCrossSafe    = False,
                             cVerbose      = False,
-                            cFlags        = []
+                            cFlags        = [],
+                            cAlien        = Nothing
                         }
 
 data Flag
@@ -86,7 +88,9 @@ options = [
     Option ['?'] ["help"]       (NoArg  (setMode Help))
         "display this help and exit",
     Option ['V'] ["version"]    (NoArg  (setMode Version))
-        "output version information and exit" ]
+        "output version information and exit",
+    Option ['A'] ["alien"]      (ReqArg (withConfig . setAlien) "ALIEN_SCRIPT")
+        "specify location of alien script for cross compile (an alternative to --cross-compile)"]
 
 addFlag :: Flag -> Mode -> Mode
 addFlag f (UseConfig c) = UseConfig $ c { cFlags = f : cFlags c }
@@ -125,6 +129,9 @@ setCrossSafe b c = c { cCrossSafe = b }
 
 setVerbose :: Bool -> ConfigM Maybe -> ConfigM Maybe
 setVerbose v c = c { cVerbose = v }
+
+setAlien :: FilePath -> ConfigM Maybe -> ConfigM Maybe
+setAlien alien c = c { cAlien = Just alien }
 
 include :: String -> Flag
 include s@('\"':_) = Include s

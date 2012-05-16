@@ -86,7 +86,11 @@ outputDirect config outName outDir outBase name toks = do
         )
       possiblyRemove oProgName $ do
 
-        rawSystemWithStdOutL ("running " ++ execProgName) beVerbose execProgName [] outName
+        case cAlien config of
+            Just alien ->
+                rawSystemWithStdOutL ("running (alien) " ++ alien ++ " run " ++ execProgName) beVerbose "/bin/sh" ["-c", alien++" run "++execProgName] outName
+            Nothing ->
+                rawSystemWithStdOutL ("running (noalien) " ++ execProgName) beVerbose execProgName [] outName
         possiblyRemove progName $ do
 
           when needsH $ writeBinaryFile outHName $

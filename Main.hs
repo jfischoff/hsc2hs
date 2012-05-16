@@ -93,7 +93,8 @@ processFiles configM files usage = do
                      cCrossCompile = cCrossCompile configM,
                      cCrossSafe    = cCrossSafe configM,
                      cVerbose      = cVerbose configM,
-                     cFlags        = cFlags configM ++ extraFlags
+                     cFlags        = cFlags configM ++ extraFlags,
+                     cAlien        = cAlien configM
                  }
 
     let outputter = if cCrossCompile config then outputCross else outputDirect

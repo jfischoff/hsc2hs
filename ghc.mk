@@ -5,10 +5,15 @@ utils/hsc2hs_dist_PROG         = $(GHC_HSC2HS_PGM)
 utils/hsc2hs_dist-install_PROG = $(GHC_HSC2HS_PGM)
 
 utils/hsc2hs_dist_SHELL_WRAPPER = YES
-utils/hsc2hs_dist_INSTALL_SHELL_WRAPPER = NO
 
+ifeq "$(BuildingCrossCompiler)" "YES"
+utils/hsc2hs_dist_INSTALL_SHELL_WRAPPER = YES
+utils/hsc2hs_dist-install_INSTALL_SHELL_WRAPPER = NO
+else
+utils/hsc2hs_dist_INSTALL_SHELL_WRAPPER = NO
 utils/hsc2hs_dist-install_SHELL_WRAPPER = YES
 utils/hsc2hs_dist-install_INSTALL_SHELL_WRAPPER = YES
+endif
 utils/hsc2hs_dist-install_INSTALL_INPLACE = NO
 
 $(eval $(call build-prog,utils/hsc2hs,dist,0))
@@ -21,10 +26,10 @@ utils/hsc2hs_dist-install_MODULES = $(utils/hsc2hs_dist_MODULES)
 utils/hsc2hs_template=$(INPLACE_TOPDIR)/template-hsc.h
 
 define utils/hsc2hs_dist_SHELL_WRAPPER_EXTRA
-echo 'HSC2HS_EXTRA="$(addprefix --cflag=,$(CONF_CC_OPTS_STAGE0)) $(addprefix --lflag=,$(CONF_GCC_LINKER_OPTS_STAGE0)) -I$(TOP)/includes"' >> "$(WRAPPER)"
+echo 'HSC2HS_EXTRA="-I$(TOP)/includes"' >> "$(WRAPPER)"
 endef
 define utils/hsc2hs_dist-install_SHELL_WRAPPER_EXTRA
-echo 'HSC2HS_EXTRA="$(addprefix --cflag=,$(CONF_CC_OPTS_STAGE1)) $(addprefix --lflag=,$(CONF_GCC_LINKER_OPTS_STAGE1))"' >> "$(WRAPPER)"
+echo 'HSC2HS_EXTRA=""' >> "$(WRAPPER)"
 endef
 
 ifneq "$(BINDIST)" "YES"
